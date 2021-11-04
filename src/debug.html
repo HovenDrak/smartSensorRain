@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+
+        <meta charset="UTF-8">
+        <meta http-equiv='refresh' content='10'>
+        <title>Sensor de Chuva</title>
+
+        <style>
+
+            body{background-color: navy;text-align: center; align-items: center;}
+            h2{font-family: Arial, Helvetica, sans-serif;color: white;}
+            .button{width: 300px;height: 50px;border-radius: 10px;background-color: grey;position: relative;}
+            .logger{background-color:rgb(38, 70, 80); position:relative; left:30%; width: 40%; height: 400px; overflow: scroll; overflow-x: hidden; align-items: flex-start; border-radius: 15px;
+            border: 2px solid black;}
+            .titulo{font-family: Arial, Helvetica, sans-serif;color: white;}
+            .status{width: 24%; height: 200px; background-color: rgb(38, 70, 80); position: absolute; left: 3%; bottom: 45%; border: 2px solid black; border-radius: 10px;}
+            .logger::-webkit-scrollbar{width: 12px;}
+            .logger::-webkit-scrollbar-track{background:rgb(38, 70, 80); border-radius: 100px;}
+            .logger::-webkit-scrollbar-thumb{background-color: dimgray; border-radius: 30px; border: 2px solid black;}
+            .button:hover{background-color:dimgrey;color: white;border: 2px solid black;}
+        </style>
+    </head>
+
+    <body>
+        <h2>Logger Sensor de Chuva</h2>
+        <div class="logger">
+            <p style="padding: 10px; text-align: start; color: white;">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam suscipit, et explicabo magnam eligendi magni tenetur ipsa odit sed, ex distinctio. Aliquam praesentium numquam voluptas natus similique asperiores omnis quidem!
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad quo sequi inventore error! Eius consequatur temporibus et minus earum autem minima libero dignissimos, alias voluptatum repellendus accusamus blanditiis voluptate molestiae?
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui sequi, accusantium saepe quos obcaecati atque totam magnam recusandae aut sit optio expedita quis ex necessitatibus consequuntur cupiditate, placeat, aliquid autem.
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ab, possimus? Cupiditate maiores et, quod beatae, ducimus sed odio eius corrupti dolores laborum harum ipsum animi sapiente ipsam recusandae ad? Quos?
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Doloremque asperiores, placeat repellat enim earum blanditiis ea optio quia fugiat unde, harum nihil animi officia rerum? Aut veritatis numquam qui placeat?
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Est quos itaque eligendi, nisi amet similique dignissimos labore placeat consequuntur commodi possimus fugiat? Quaerat voluptatibus aut consequatur eligendi alias, laboriosam eum.
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae nemo quia, qui sit magni, pariatur doloribus harum natus veniam aspernatur facilis provident necessitatibus explicabo nesciunt ipsa at est, soluta culpa?
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta harum quae architecto ut obcaecati atque error repudiandae sequi omnis at velit est sed, nobis enim quis saepe vitae temporibus quidem.
+            </p>
+        </div>
+        <p></p>
+        <div class="status">
+            <h3 class="titulo">Tabela de Status</h3>
+            <p style="padding: 10px; text-align: start; color: white;">
+            2021/11/04 12:05:46: Status Chuva: sem chuva
+            2021/11/04 12:05:46: Status Janela: fechada
+            </p>
+        </div>
+        <a href="/">
+            <button class="button">Voltar para Home</button>
+        </a>
+    </body>
+</html>
