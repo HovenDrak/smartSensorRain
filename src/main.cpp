@@ -16,6 +16,8 @@ void ICACHE_RAM_ATTR timerLED_OSC()
 {
   timer1_write(TICK_EVENT_COUNTER);
   digitalWrite(LED_OSC, digitalRead(LED_OSC) ^ 1);
+
+  // @TODO LOG TEMPO REAL...
 }
 // Krod add ****************************
 
@@ -26,7 +28,7 @@ NTPClient ntpClient(udp, "b.ntp.br", -3 * 3600);
 /* horário do esp */
 
 /* rede gerada pelo esp */
-const char *ssidOFF = "Sensor de Chuva teste";
+const char *ssidOFF = "Sensor de Chuva";
 const char *passwordOFF = "12345678";
 /* rede gerada pelo esp */
 
@@ -38,7 +40,7 @@ const byte POSI_TOTAL = 40 + POSI_PASSWORD;
 
 /* HTTP */
 const char *host = "trigger.fullarm.com";
-String url = "/api/v1/trigger/2356";
+String url = "/api/v1/trigger/2369";
 const int httpsPort = 443;
 const String token = "d417cb59bf5794971b80480eeb7c73ed7470eaca";
 const char fingerprint[] PROGMEM = "CD 30 5E 9A FF D4 8B 62 DC 83 D4 3F D5 A4 CD A4 B2 F5 53 0E";
@@ -58,6 +60,8 @@ String arquivoPrincipal = "./log.txt";
 String arquivoStatus = "./logStatus.txt";
 String buf;
 /* logger esp */
+
+String bot;
 
 /* pagina home */
 const char PAGINA_HTML_HOME[] PROGMEM = R"rawliteral(
@@ -100,8 +104,10 @@ border: 2px solid black;
 <p></p>
 <a href="/debug"><button class="button">Log de Informações</button></a>
 <p></p>
+<a href="/teste-botoeira"><button class="button">Teste de Botoeira</button></a>
+<p></p>
 <div style="width: 300px; height: 2px; background-color: white; position: relative; left: 38.8%;"></div>
-<h5 class="titulo" style="width: 200px; position: absolute; left: 47%; bottom: 31%;">Hardware FullArm @2021</h5>
+<h5 class="titulo" style="width: 200px; position: absolute; left: 47%; bottom: 21.5%;">Hardware FullArm @2021</h5>
 </body>
 </html>
 )rawliteral";
@@ -260,12 +266,12 @@ WiFiClient espClient;
 WiFiClientSecure httpsClient;
 ESP8266WebServer server(80);
 
+void reconnectWiFi();
+
 /* funções EEPROM */
 String getEEPROMString(byte offset);
 void setEEPROMString(byte offset, String s);
 /* funções EEPROM */
-
-void reconnectWiFi();
 
 /* funções log esp */
 void formatFS(void);
@@ -285,7 +291,7 @@ void setup()
   openFS();
   createFile(arquivoPrincipal, arquivoStatus);
 
-  pinMode(sensor, INPUT);
+  pinMode(sensor, INPUT_PULLUP);
   pinMode(janela, INPUT_PULLUP);
   pinMode(LED_OSC, OUTPUT);
   pinMode(botoeira, OUTPUT);
@@ -294,10 +300,6 @@ void setup()
   pinMode(LED_WIFI, OUTPUT);
   pinMode(LED_JANELA, OUTPUT);
   pinMode(LED_CHUVA, OUTPUT);
-
-  digitalWrite(LED_WIFI, LOW);
-  digitalWrite(LED_JANELA, LOW);
-  digitalWrite(LED_CHUVA, LOW);
 
   // Krod add ****************************
   timer1_attachInterrupt(timerLED_OSC);
@@ -313,93 +315,123 @@ void setup()
   WiFi.softAP(ssidOFF, passwordOFF, 2, 0);
   WiFi.config(staticIP, gateway, subnet);
 
+  Serial.println(getEEPROMString(POSI_SSID) + getEEPROMString(POSI_PASSWORD));
+
   server.begin();
   Serial.println("Server started");
   Serial.print("AP IP address: ");
   Serial.println(WiFi.softAPIP());
 
-  ESP.wdtEnable(15500);
+  ESP.wdtEnable(17000);
 
-  server.on("/", [](){ server.send(200, "text/html", PAGINA_HTML_HOME); });
+  server.on("/", []()
+            { server.send(200, "text/html", PAGINA_HTML_HOME); });
 
-  server.on("/config_wifi", [](){ server.send(200, "text/html", PAGINA_HTML_WIFI); });
+  server.on("/config_wifi", []()
+            { server.send(200, "text/html", PAGINA_HTML_WIFI); });
 
-  server.on("/config_mqtt", [](){ server.send(200, "text/html", PAGINA_HTML_MQTT); });
+  server.on("/config_mqtt", []()
+            { server.send(200, "text/html", PAGINA_HTML_MQTT); });
 
   server.on("/debug", []()
-  {
-    buf = "";
-    buf += "<!DOCTYPE html>";
-    buf += "<html lang=\"pt-br\">";
-    buf += "<head>";
-    buf += "<meta charset=\"UTF-8\">";
-    buf += "<meta http-equiv='refresh' content='5'>";
-    buf += "<title>Sensor de Chuva</title>";
-    buf += "<style>";
-    buf += "body{background-color: navy;text-align: center; align-items: center;}";
-    buf += "h2{font-family: Arial, Helvetica, sans-serif;color: white;}";
-    buf += ".button{width: 300px;height: 50px;border-radius: 10px;background-color: grey;position: relative;}";
-    buf += ".logger{background-color: rgb(38, 70, 80); position:relative; left:30%; width: 40%; height: 400px; overflow: scroll; overflow-x: hidden; align-items: flex-start; border-radius: 15px;border : 2px solid black;}";
-    buf += ".logger::-webkit-scrollbar{width: 12px; }";
-    buf += ".logger::-webkit-scrollbar-track{background: rgb(38, 70, 80); border-radius: 100px;}";
-    buf += ".logger::-webkit-scrollbar-thumb{background-color: dimgray; border-radius: 30px; border: 2px solid black;}";
-    buf += ".button:hover{background-color:dimgrey;color: white;border: 2px solid black;}";
-    buf += ".titulo{font-family: Arial, Helvetica, sans-serif;color: white;}";
-    buf += ".status{width: 24%; height: 200px; background-color: rgb(38, 70, 80); position: absolute; left: 3%; bottom: 45%; border: 2px solid black; border-radius: 10px;}";
-    buf += "</style>";
-    buf += "</head>";
-    buf += "<body>";
-    buf += "<h2 class=\"titulo\">Sensor de Chuva</h2>";
-    buf += "<h3 class=\"titulo\">Logger de Informações</h3>";
-    buf += "<div class=\"logger\">";
-    buf += "<p style=\"padding: 10px; text-align: start; color: white;\">";
-    readFile(arquivoPrincipal);
-    buf += "</p>";
-    buf += "</div>";
-    buf += "<p></p>";
-    buf += "<div class=\"status\"><h3 class=\"titulo\">Tabela de Status</h3>";
-    buf += "<p style=\"padding: 10px; text-align: start; color: white;\">";
-    readFile(arquivoStatus);
-    buf += "</p>";
-    buf += "</div>";
-    buf += "<a href=\"/\">";
-    buf += "<button class=\"button\">Voltar para Home</button>";
-    buf += "</a>";
-    buf += "</body>";
-    buf += "</html>";
-    server.send(200, "text/html", buf);
-  });
+            {
+              buf = "";
+              buf += "<!DOCTYPE html>";
+              buf += "<html lang=\"pt-br\">";
+              buf += "<head>";
+              buf += "<meta charset=\"UTF-8\">";
+              buf += "<meta http-equiv='refresh' content='5'>";
+              buf += "<title>Sensor de Chuva</title>";
+              buf += "<style>";
+              buf += "body{background-color: navy;text-align: center; align-items: center;}";
+              buf += "h2{font-family: Arial, Helvetica, sans-serif;color: white;}";
+              buf += ".button{width: 300px;height: 50px;border-radius: 10px;background-color: grey;position: relative;}";
+              buf += ".logger{background-color: rgb(38, 70, 80); position:relative; left:30%; width: 40%; height: 400px; overflow: scroll; overflow-x: hidden; align-items: flex-start; border-radius: 15px;border : 2px solid black;}";
+              buf += ".logger::-webkit-scrollbar{width: 12px; }";
+              buf += ".logger::-webkit-scrollbar-track{background: rgb(38, 70, 80); border-radius: 100px;}";
+              buf += ".logger::-webkit-scrollbar-thumb{background-color: dimgray; border-radius: 30px; border: 2px solid black;}";
+              buf += ".button:hover{background-color:dimgrey;color: white;border: 2px solid black;}";
+              buf += ".titulo{font-family: Arial, Helvetica, sans-serif;color: white;}";
+              buf += ".status{width: 24%; height: 200px; background-color: rgb(38, 70, 80); position: absolute; left: 3%; bottom: 45%; border: 2px solid black; border-radius: 10px;}";
+              buf += "</style>";
+              buf += "</head>";
+              buf += "<body>";
+              buf += "<h2 class=\"titulo\">Sensor de Chuva</h2>";
+              buf += "<h3 class=\"titulo\">Logger de Informações</h3>";
+              buf += "<div class=\"logger\" id=\"log\">";
+              buf += "<p style=\"padding: 10px; text-align: start; color: white;\">";
+              readFile(arquivoPrincipal);
+              buf += "</p>";
+              buf += "</div>";
+              buf += "<p></p>";
+              buf += "<div class=\"status\"><h3 class=\"titulo\">Tabela de Status</h3>";
+              buf += "<p style=\"padding: 10px; text-align: start; color: white;\">";
+              readFile(arquivoStatus);
+              buf += "</p>";
+              buf += "</div>";
+              buf += "<a href=\"/\">";
+              buf += "<button class=\"button\">Voltar para Home</button>";
+              buf += "</a>";
+              buf += "</body>";
+              buf += "<script>";
+              buf += "var logger = document.querySelector('#log');";
+              buf += "logger.scrollTop = logger.scrollHeight - logger.clientHeight;";
+              buf += "</script>";
+              buf += "</html>";
+              server.send(200, "text/html", buf);
+            });
+
+  server.on("/teste-botoeira", []()
+            {
+              bot = "";
+              bot += "comando por botoeira...";
+              digitalWrite(botoeira, HIGH);
+              delay(500);
+              digitalWrite(botoeira, LOW);
+              writeFile("Janela fechada por BOTOEIRA!!!", arquivoPrincipal);
+              server.send(200, "text/html", bot);
+            });
+
+  server.on("/reiniciar", []()
+            {
+              bot = "";
+              bot += "reiniciando...";
+              writeFile("Reiniciando ESP...", arquivoPrincipal);
+              server.send(200, "text/html", bot);
+              ESP.restart();
+            });
 
   server.on("/salvar-senha", []()
-  {
-    String ssid = server.arg(0);
-    String password = server.arg(1);
-  
-    Serial.println(ssid);
-    Serial.println(password);
+            {
+              String ssid = server.arg(0);
+              String password = server.arg(1);
 
-    WiFi.begin(ssid, password); //Inicia WiFi com os dados preenchidos
-    delay(1000);
-    Serial.print("Conectando");
-    while (WiFi.status() != WL_CONNECTED)
-    {
-      delay(500);
-      Serial.print(".");
-    }
-    Serial.println();
+              Serial.println(ssid);
+              Serial.println(password);
 
-    Serial.print("Conectado | Endereço IP: ");
-    digitalWrite(LED_WIFI, HIGH);
-    Serial.println(WiFi.localIP());
-    delay(1000);
+              WiFi.begin(ssid, password); //Inicia WiFi com os dados preenchidos
+              delay(1000);
+              Serial.print("Conectando");
+              while (WiFi.status() != WL_CONNECTED)
+              {
+                delay(500);
+                Serial.print(".");
+              }
+              Serial.println();
 
-    setEEPROMString(POSI_SSID, ssid);
-    setEEPROMString(POSI_PASSWORD, password);
+              Serial.print("Conectado | Endereço IP: ");
+              digitalWrite(LED_WIFI, HIGH);
+              Serial.println(WiFi.localIP());
+              delay(1000);
 
-    EEPROM.commit();
+              setEEPROMString(POSI_SSID, ssid);
+              setEEPROMString(POSI_PASSWORD, password);
 
-    server.send(200, "text/html", PAGINA_HTML_WIFI);
-  });
+              EEPROM.commit();
+
+              delay(500);
+              server.send(200, "text/html", PAGINA_HTML_WIFI);
+            });
   ElegantOTA.begin(&server);
   server.begin();
 }
@@ -408,33 +440,20 @@ void loop()
 {
   ESP.wdtFeed();
   reconnectWiFi();
-
   httpsClient.setFingerprint(fingerprint);
   httpsClient.setTimeout(15000);
   server.handleClient();
 
-  if ((millis() - temp2) >= 4500)
+  if ((millis() - temp2) >= 1000)
   {
     temp2 = millis();
-    String statusChuva = digitalRead(sensor)? "sem chuva" : "chovendo";
+    String statusChuva = digitalRead(sensor) ? "sem chuva" : "chovendo";
     String statusJanela = digitalRead(janela) ? "fechada" : "aberta";
 
-    Serial.println("Status da chuva: " + statusChuva +"\nStatus da Janela: " + statusJanela);
-
-    if (statusChuva == "sem chuva"){
-      digitalWrite(LED_CHUVA, LOW);
-    }
-    else{
-      digitalWrite(LED_CHUVA, HIGH);
-    }
-    if (statusJanela == "fechada"){
-      digitalWrite(LED_JANELA, LOW);
-    }
-    else{
-      digitalWrite(LED_JANELA, HIGH);
-    }
+    Serial.println("Status da chuva: " + statusChuva + "\nStatus da Janela: " + statusJanela);
 
     deleteFile(arquivoStatus);
+
     writeFile("Status Chuva: " + statusChuva, arquivoStatus);
     delay(200);
     writeFile("Status Janela: " + statusJanela, arquivoStatus);
@@ -447,105 +466,116 @@ void loop()
     if (WiFi.status() == WL_CONNECTED)
     {
       digitalWrite(LED_WIFI, HIGH);
-      if (digitalRead(sensor) == LOW && digitalRead(janela) == LOW)
-      {
-        Serial.println("HTTPS Connecting");
-        writeFile("Conectando no host HTTPS...", arquivoPrincipal);
-        delay(200);
-        writeFile("Chuva detectada!!!", arquivoPrincipal);
-        delay(200);
-        writeFile("Janela aberta!!!", arquivoPrincipal);
 
-        HTTPClient http;
-        int r = 0;
-
-        while ((!httpsClient.connect(host, httpsPort)) && (r < 30))
-        {
-          delay(100);
-          Serial.print(".");
-          r++;
-        }
-        if (r == 30)
-        {
-          Serial.println("Connection failed");
-          writeFile("Conexão HTTPS falhou!!!", arquivoPrincipal);
-        }
-        else
-        {
-          Serial.println("Connected to web");
-          writeFile("Conectado com sucesso", arquivoPrincipal);
-        }
-
-        writeFile("Enviando request...", arquivoPrincipal);
-        delay(200);
-        httpsClient.print(String("POST ") + url + " HTTP/1.1\r\n" +
-                          "Host: " + host + "\r\n" +
-                          "Authorization: Bearer " + token + "\r\n" +
-                          "Keep-Alive: timeout=5, max=100" + "\r\n" +
-                          "Content-Type: application/json; charset=UTF-8; charset=UTF-8" + "\r\n" +
-                          "Connection: close\r\n\r\n");
-
-        Serial.println("request sent");
-        delay(200);
-        writeFile("Request enviada!!!", arquivoPrincipal);
-
-        /*
-      if (espClient.connect(host, 80))
+      if (digitalRead(sensor) == LOW)
       {
 
-        Serial.println("Connected to web");
-
-        espClient.print(String("POST ") + url + " HTTP/1.1\r\n" +
-                        "Host: " + host + "\r\n" +
-                        "Authorization: Bearer " + token + "\r\n" +
-                        "Keep-Alive: timeout=5, max=100" + "\r\n" +
-                        "Content-Type: application/json; charset=UTF-8; charset=UTF-8" + "\r\n" +
-                        "Connection: close\r\n\r\n");
-      }
-      Serial.println("request sent");
-      */
-
-        while (espClient.connected())
-        {
-          String line = espClient.readStringUntil('\n');
-          if (line == "\r")
-          {
-            Serial.println("headers received");
-            break;
-          }
-        }
-        Serial.println("reply was:");
-        Serial.println("==========");
-        String line;
-
-        while (espClient.available())
-        {
-          line = espClient.readStringUntil('\n');
-          Serial.println(line);
-        }
-        Serial.println("==========");
-        writeFile("Fechando conexão HTTPS!!!", arquivoPrincipal);
-        Serial.println("closing connection");
-
-        writeFile("Esperando janela ser fechada...", arquivoPrincipal);
-        delay(7000);
+        digitalWrite(LED_CHUVA, HIGH);
 
         if (digitalRead(janela) == LOW)
         {
-          writeFile("Janela continua aberta...", arquivoPrincipal);
+
+          digitalWrite(LED_JANELA, HIGH);
+
+          Serial.println("HTTPS Connecting");
+          writeFile("Conectando no host HTTPS...", arquivoPrincipal);
           delay(200);
-          digitalWrite(botoeira, HIGH);
-          delay(100);
-          digitalWrite(botoeira, LOW);
-          writeFile("Janela fechada por BOTOEIRA!!!", arquivoPrincipal);
-          Serial.println("Comando por botoeira");
+          writeFile("Chuva detectada!!!", arquivoPrincipal);
+          delay(200);
+          writeFile("Janela aberta!!!", arquivoPrincipal);
+
+          int r = 0;
+
+          while ((!httpsClient.connect(host, httpsPort)) && (r < 30))
+          {
+            delay(100);
+            Serial.print(".");
+            r++;
+          }
+          if (r == 30)
+          {
+            Serial.println("Connection failed");
+            writeFile("Conexão HTTPS falhou!!!", arquivoPrincipal);
+          }
+          else
+          {
+            Serial.println("Connected to web");
+            writeFile("Conectado com sucesso", arquivoPrincipal);
+          }
+
+          writeFile("Enviando request...", arquivoPrincipal);
+          delay(200);
+          httpsClient.print(String("POST ") + url + " HTTP/1.1\r\n" +
+                            "Host: " + host + "\r\n" +
+                            "Authorization: Bearer " + token + "\r\n" +
+                            "Keep-Alive: timeout=5, max=100" + "\r\n" +
+                            "Content-Type: application/json; charset=UTF-8; charset=UTF-8" + "\r\n" +
+                            "Connection: close\r\n\r\n");
+
+          Serial.println("request sent");
+          delay(200);
+          writeFile("Request enviada!!!", arquivoPrincipal);
+
+          while (espClient.connected())
+          {
+            String line = espClient.readStringUntil('\n');
+            if (line == "\r")
+            {
+              Serial.println("headers received");
+              break;
+            }
+          }
+          Serial.println("reply was:");
+          Serial.println("==========");
+          String line;
+
+          while (espClient.available())
+          {
+            line = espClient.readStringUntil('\n');
+            Serial.println(line);
+          }
+          Serial.println("==========");
+          writeFile("Fechando conexão HTTPS!!!", arquivoPrincipal);
+          Serial.println("closing connection");
+
+          writeFile("Esperando janela ser fechada...", arquivoPrincipal);
           delay(7000);
+
+          if (digitalRead(janela) == LOW)
+          {
+            writeFile("Janela continua aberta...", arquivoPrincipal);
+            delay(200);
+            digitalWrite(botoeira, HIGH);
+            delay(500);
+            digitalWrite(botoeira, LOW);
+            writeFile("Janela fechada por BOTOEIRA!!!", arquivoPrincipal);
+            Serial.println("Comando por botoeira");
+            delay(7000);
+          }
+          else
+          {
+            digitalWrite(janela, LOW);
+            writeFile("Janela fechou por REQUEST!!!", arquivoPrincipal);
+            Serial.println("Comando por REQUEST");
+          }
         }
         else
         {
-          writeFile("Janela fechou por REQUEST!!!", arquivoPrincipal);
-          Serial.println("Comando por REQUEST");
+          digitalWrite(LED_JANELA, LOW);
         }
+      }
+      else
+      {
+        digitalWrite(LED_CHUVA, LOW);
+        if (digitalRead(janela) == LOW)
+        {
+          digitalWrite(LED_JANELA, HIGH);
+        }
+        else
+        {
+          digitalWrite(LED_JANELA, LOW);
+        }
+        return;
       }
     }
     else
@@ -553,12 +583,16 @@ void loop()
       reconnectWiFi();
     }
   }
-  }
-String getEEPROMString(byte offset){
+}
+
+String getEEPROMString(byte offset)
+{
 
   String s = "";
-  while(offset < POSI_TOTAL){
-    if (EEPROM.read(offset)==0){
+  while (offset < POSI_TOTAL)
+  {
+    if (EEPROM.read(offset) == 0)
+    {
       break;
     }
     s += char(EEPROM.read(offset));
@@ -567,20 +601,23 @@ String getEEPROMString(byte offset){
   return s;
 }
 
-void setEEPROMString (byte offset, String s){
+void setEEPROMString(byte offset, String s)
+{
 
-  for (byte b=0; b <= s.length(); b++){
+  for (byte b = 0; b <= s.length(); b++)
+  {
     EEPROM.write(offset + b, s[b]);
   }
 }
 
 void reconnectWiFi(void)
 {
-  //se já está conectado a rede WI-FI, nada é feito.
-  //Caso contrário, são efetuadas tentativas de conexão
+
   if (WiFi.status() == WL_CONNECTED)
+  {
     digitalWrite(LED_WIFI, HIGH);
     return;
+  }
 
   WiFi.begin(getEEPROMString(POSI_SSID), getEEPROMString(POSI_PASSWORD));
 
@@ -616,7 +653,8 @@ void createFile(String arquivoPrincipal, String arquivoStatus)
   {
     Serial.println("Arquivo principal ja existe!");
   }
-  else{
+  else
+  {
     Serial.println("Criando o arquivo principal...");
     wFile = SPIFFS.open(arquivoPrincipal, "w+");
 
@@ -683,11 +721,9 @@ void writeFile(String msg, String arquivo)
     String hora = ntpClient.getFormattedTime();
     time_t epoch = ntpClient.getEpochTime();
 
+    struct tm ts;
+    char buffer[80];
 
-    struct tm  ts;
-    char       buffer[80];
-
-    
     time(&epoch);
 
     ts = *localtime(&epoch);
