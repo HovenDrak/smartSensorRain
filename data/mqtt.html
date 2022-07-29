@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>MQTT</title>
+    <style>
+        body {
+            background-color: navy;
+            text-align: center;
+        }
+
+        h2 {
+            font-family: Arial, Helvetica, sans-serif;
+            color: black;
+        }
+
+        .button {
+            width: 300px;
+            height: 50px;
+            border-radius: 10px;
+            background-color: grey;
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Configurações do MQTT</h2>
+    <form action="/salvar-mqtt" method="POST">
+        <div>
+            <label for="host">Host: </label>
+            <input type="text" id="host" class="campo" placeholder=" Digite o host do MQTT" required="required"
+                value="" />
+        </div>
+        <p></p>
+        <div>
+            <label for="port">Porta: </label>
+            <input type="text" id="porta" name="porta" class="campo" placeholder=" Digite a porta do MQTT"
+                required="required" value="" />
+        </div>
+        <p></p>
+        <div>
+            <div>
+                <label for="username">Username: </label>
+                <input type="text" id="user" name="user" class="campo" placeholder=" Digite o usuário MQTT"
+                    required="required" value="" />
+            </div>
+            <p></p>
+            <div>
+                <label for="senha">Senha: </label>
+                <input type="password" id="senha" name="senha" class="campo" placeholder=" Digite a senha do MQTT"
+                    required="required" value="" />
+                <input type="checkbox" onclick="show()">
+            </div>
+            <p></p>
+            <div>
+                <button type="submit" value="Enviar" onclick="enviar()">Enviar Configurações</button>
+            </div>
+    </form>
+    <a href="/">
+        <button class="button">Voltar para Home</button>
+    </a>
+</body>
+
+</html>
