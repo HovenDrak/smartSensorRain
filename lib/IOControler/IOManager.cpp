@@ -3,19 +3,24 @@
 #include <Arduino.h>
 #include <Ticker.h>
 #include <Const.h>
+#include <ApiManager.h>
+#include <WebManager.h>
 
 Ticker timer;
 Variables varIO;
+WebManager webManager;
+ApiManager apiManagerIO;
 
-boolean canClose = true;
+int STATUS_SENSORS[2] = {0,0};
 
 IOManager::IOManager(){}
 
 void IOManager::pinSetConfig(){
     for(int i = 0; i < 5; i++){
         pinMode(varIO.PIN_OUTS[i], OUTPUT);
+        digitalWrite(varIO.PIN_OUTS[i], HIGH);
     }
-    digitalWrite(varIO.PIN_OUT_BOT, LOW);
+    
 
     for(int i = 0; i < 2; i++){
         pinMode(varIO.PIN_IN[i], INPUT_PULLUP);
@@ -34,69 +39,94 @@ void IOManager::ledCheckConfig(){
 }
 
 void IOManager::cmndBot(){
-    digitalWrite(varIO.PIN_OUT_BOT, HIGH);
-    delay(500);
     digitalWrite(varIO.PIN_OUT_BOT, LOW);
+    delay(500);
+    digitalWrite(varIO.PIN_OUT_BOT, HIGH);
 }
 
 void IOManager::cmndLedWifi(boolean wifiConnected){
     if(wifiConnected){
-        digitalWrite(varIO.PIN_LED_WIFI, HIGH);
+        digitalWrite(varIO.PIN_LED_WIFI, LOW);
         return;
     }
-    digitalWrite(varIO.PIN_LED_WIFI, LOW);
+    digitalWrite(varIO.PIN_LED_WIFI, HIGH);
 }
 
-void IOManager::cmndLedWindow(boolean windowClosed){
-    if(windowClosed){
-        digitalWrite(varIO.PIN_LED_WINDOW, HIGH);
-        return;
+void IOManager::cmndLed(int led, boolean active){
+    switch(led){
+        case 12:
+            if(active){
+                digitalWrite(varIO.PIN_LED_SENSOR_RAIN, LOW);
+                break;
+            } 
+            digitalWrite(varIO.PIN_LED_SENSOR_RAIN, HIGH);
+            break;
+            
+        case 13:
+            if(active){
+                digitalWrite(varIO.PIN_LED_WINDOW, LOW);
+                break;
+            } 
+            digitalWrite(varIO.PIN_LED_WINDOW, HIGH);
+            break;
     }
-    digitalWrite(varIO.PIN_LED_WINDOW, LOW);
-}
-
-void IOManager::cmndLedRainSensor(boolean detectedRain){
-    if(detectedRain){
-        digitalWrite(varIO.PIN_LED_SENSOR_RAIN, HIGH);
-        return;
-    }
-    digitalWrite(varIO.PIN_LED_SENSOR_RAIN, LOW);
 }
 
 boolean IOManager::verifyWindowClosed(){
-    if(digitalRead(varIO.PIN_IN_WINDOW) == HIGH){
-        cmndLedWindow(true);
+    if(digitalRead(varIO.PIN_IN_WINDOW) == 0){
+        cmndLed(varIO.PIN_LED_WINDOW, true);
         return true;
     }
-    cmndLedWindow(false);
+    cmndLed(varIO.PIN_LED_WINDOW, false);
     return false;
 }
 
 boolean IOManager::verifyDetectedSensorRain(){
-    if(digitalRead(varIO.PIN_IN_SENSOR_RAIN) == HIGH){
-        cmndLedWindow(true);
+    if(digitalRead(varIO.PIN_IN_SENSOR_RAIN) == LOW){
+        cmndLed(varIO.PIN_LED_SENSOR_RAIN, true);
         return true;
     }
-    cmndLedWindow(false);
+    cmndLed(varIO.PIN_LED_SENSOR_RAIN, false);
     return false;
 }
 
 void IOManager::verifySensors(){
-    if(!verifyDetectedSensorRain()){
-        if(!verifyWindowClosed()){
-            canClose = true;
-            return;
+    boolean canClose = true;
+
+    for(int i = 0; i < 2; i++){
+        switch (digitalRead(varIO.PIN_IN[i])){
+            case 0:
+                if(STATUS_SENSORS[i] != 0){
+                    STATUS_SENSORS[i] = 0;
+                }
+                cmndLed(varIO.PIN_IN[i], true);
+                break;
+            case 1:
+                if(STATUS_SENSORS[i] != 1){
+                    STATUS_SENSORS[i] = 1;
+                }
+                cmndLed(varIO.PIN_IN[i], false);
+                canClose = false;
+                break;
+
+            default:
+                Serial.println("[ESP8266] ERROR AO LER O SENSOR");
+                break;
         }
     }
-    canClose = false;
+
+    webManager.refreshStatus(STATUS_SENSORS[0], STATUS_SENSORS[1]);
+    
+    if(canClose){
+        if(WiFi.status() == WL_CONNECTED){
+            apiManagerIO.postTrigger();
+        } else {
+            cmndBot();
+            delay(7000);
+        }
+    }
 }
 
-boolean IOManager::canCloseWindow(){
-    if (WiFi.status() == WL_CONNECTED){
-        return canClose;
-    }
-    return false;
-}
 
 
 

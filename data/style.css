@@ -1,0 +1,217 @@
+.body-index {
+    margin-top: 30px;
+    align-self: center;
+}
+
+.flex-debug{
+    margin: 0 auto;
+    display: flex;
+    text-align: center;
+}
+
+.container {
+    margin: 0 auto;
+    max-width: 400px;
+    padding: 30px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    background-color: #ffffff;
+    border-radius: 10px;
+}
+
+
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 0px;
+    color: #0ee6b1;
+    font-size: 35px;
+}
+
+#titleRed {
+    color: #e41313;
+}
+
+#titleBlack {
+    color: #000000;
+}
+
+
+
+form .field-group {
+    box-sizing: border-box;
+    clear: both;
+    padding: 4px 0;
+    position: relative;
+    margin: 1px 0;
+    width: 100%;
+}
+
+.text-field {
+    font-size: 15px;
+    margin-bottom: 4%;
+    -webkit-appearance: none;
+    display: block;
+    background: #fafafa;
+    color: #636363;
+    width: 100%;
+    padding: 15px 0px 15px 0px;
+    text-indent: 10px;
+    border-radius: 5px;
+    border: 1px solid #e6e6e6;
+    background-color: transparent;
+}
+
+.text-field:focus {
+    border-color: #00bcd4;
+    outline: 0;
+}
+
+.button-container {
+    box-sizing: border-box;
+    clear: both;
+    margin: 1px 0 0;
+    padding: 4px 0;
+    position: relative;
+    width: 100%;
+}
+
+
+
+#status {
+    text-align: center;
+    text-decoration: none;
+    color: #336859;
+    font-size: 14px;
+}
+
+.lnr-eye {
+    position: absolute;
+    top: 18px;
+    right: 10px;
+    cursor: pointer;
+}
+
+/* ------------------- INDEX CSS ------------------- */
+
+
+/* ------------------- LOG CSS ------------------- */
+
+.container-log-status{
+    padding: 15px;
+    margin-bottom: 2%;
+    margin: 0 auto;
+    display: flex;
+    text-align: center;
+}
+
+.container-log-status-item{
+    min-width: 80px;
+    margin: 15px;
+}
+
+.container-title-log {
+    max-height: 100px;
+    max-width: 600px;
+    padding: 15px;
+    margin-bottom: 2%;
+}
+
+.container-logger {
+    max-height: 300px;
+    min-width: 800px;
+    overflow: scroll;
+    overflow-x: hidden;
+    align-items: flex-start;
+}
+
+.container-logger::-webkit-scrollbar {
+    width: 12px;
+}
+
+.container-logger::-webkit-scrollbar-track {
+    background: rgb(80, 39, 38);
+    border-radius: 100px;
+}
+
+.container-logger::-webkit-scrollbar-thumb {
+    background-color: #e41313;
+    border-radius: 30px;
+    border: 2px solid black;
+}
+
+.p-logger{
+    padding: 10px; 
+    text-align: start; 
+    color: black;
+}
+
+
+/* ------------------- GLOBAL CSS ------------------- */
+
+body {
+    color: #434343;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    background-color: #eeeeee;
+    margin-top: 60px;
+}
+
+.button {
+    background: #00E1AA;
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+    cursor: pointer;
+    display: block;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 15px 0;
+    text-align: center;
+    text-transform: uppercase;
+    width: 100%;
+    -webkit-transition: background 250ms ease;
+    -moz-transition: background 250ms ease;
+    -o-transition: background 250ms ease;
+    transition: background 250ms ease;
+}
+
+.button:hover {
+    background-color: dimgrey;
+    color: white;
+    border: 2px solid black;
+}
+
+.button-out-container{
+    width: 30%;
+    margin: 0 auto;
+}
+
+h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 0px;
+    color: #000000;
+    font-size: 30px;
+}
+
+h4 {
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 0px;
+    color: #000000;
+    font-size: 25px;
+}
+
+p {
+    text-align: center;
+    text-decoration: none;
+    color: #87c1d3;
+    font-size: 18px;
+}
+
+a {
+    text-decoration: none;
+    color: #ffffff;
+    margin-top: 0%;
+}

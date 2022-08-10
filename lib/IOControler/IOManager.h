@@ -7,10 +7,8 @@ class IOManager{
         void pinSetConfig();
         void verifySensors();
         void ledCheckConfig();
-        boolean canCloseWindow();
         boolean verifyWindowClosed();
         boolean verifyDetectedSensorRain();
+        void cmndLed(int led, boolean active);
         void cmndLedWifi(boolean wifiConnected);
-        void cmndLedWindow(boolean wifiConnected);
-        void cmndLedRainSensor(boolean wifiConnected);
 };

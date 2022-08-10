@@ -29,11 +29,31 @@ class Variables{
         String PATH_TRIGGER = "/api/v1/trigger/2369";
 
         // -------------X CONST WEB X------------- //
-        String FILE_HTML_INDEX = "/index.html";
-        String FILE_HTML_WIFI = "/wifi.html";
-        String FILE_HTML_MQTT = "/mqtt.html";
         String FILE_LOG = "/log.txt";
         String FILE_LOG_STATUS = "/logStatus.txt";
+
+        String IMG_WINDOW_OPEN = "/icon_sensor_open.png";
+        String IMG_WINDOW_CLOSED = "/icon_sensor_close.png";
+        String IMG_RAIN_DETECTED = "/icon_rain_detected.png";
+        String IMG_RAIN_NOT_DETECTED = "/icon_rain_not_detected.png";
+
+        String FILE_CSS = "/style.css";
+        String FILE_HTML_WIFI = "/wifi.html";
+        String FILE_HTML_MQTT = "/mqtt.html";
+        String FILE_HTML_INDEX = "/index.html";
+        String FILE_HTML_LOGGER = "/logger.html";
+        
+
+        String REPLACE_STATUS = "<div class=\"container-log-status\"></div>";
+        String INITIAL_DIV = "<div class=\"container-log-status\">";
+        String FINAL_DIV = "</div>";
+
+        String STATUS_SENSOR_OPEN = "window_open";
+        String STATUS_SENSOR_CLOSED = "window_closed";
+
+        String STATUS_RAIN_DETECTED = "rainy";
+        String STATUS_RAIN_NOT_DETECTED = "cloudy";
+
 
         // -------------X CONST EPROM X------------- //
         const byte POSITION_EEPROM_SSID = 0;
@@ -41,7 +61,7 @@ class Variables{
         const byte POSITION_EEPROM_TOTAL = 40 + POSITION_EEPROM_PASSWORD;
 
         // -------------X CONST ESP X------------- //
-
         int SERIAL_RATE = 115200;
         int WATCHDOG_TIME = 17000;
+
 };

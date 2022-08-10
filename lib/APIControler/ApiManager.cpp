@@ -28,28 +28,30 @@ void ApiManager::postTrigger(){
         https.addHeader("Content-Type", "application/json");  
         https.addHeader("Connection", "keep-alive");
         
-        int httpCode = https.GET();
+        int httpCode = https.POST("");
         delay(1000);
+        Serial.println(httpCode);
         String httpBody = https.getString();
         https.end();
 
         if(httpCode != 200){
-            fsManagerApi.writeFile(varApi.FILE_LOG, "FALHA NO ACIONAMENTO DA TRIGGER.");
-            fsManagerApi.writeFile(varApi.FILE_LOG, "[HTTP] CODE: " + httpCode);
-            fsManagerApi.writeFile(varApi.FILE_LOG, "[HTTP] BODY: " + httpBody);
+            fsManagerApi.writeFile(varApi.FILE_LOG, "FALHA NO ACIONAMENTO DA TRIGGER.", true);
+            fsManagerApi.writeFile(varApi.FILE_LOG, "[HTTP] CODE: " + httpCode, true);
+            fsManagerApi.writeFile(varApi.FILE_LOG, "[HTTP] BODY: " + httpBody, true);
+            
             return;
         }
-        fsManagerApi.writeFile(varApi.FILE_LOG, "TRIGGER ACIONADA COM SUCESSO.");
-        fsManagerApi.writeFile(varApi.FILE_LOG, "AGUARDANDO JANELA SER FECHADA.");
+        fsManagerApi.writeFile(varApi.FILE_LOG, "TRIGGER ACIONADA COM SUCESSO.", true);
+        fsManagerApi.writeFile(varApi.FILE_LOG, "AGUARDANDO JANELA SER FECHADA.", true);
         delay(7000);
 
-        if(ioManagerApi.verifyWindowClosed()){
-            fsManagerApi.writeFile(varApi.FILE_LOG, "JANELA FECHADA POR REQUEST.");
+        if(!ioManagerApi.verifyWindowClosed()){
+            fsManagerApi.writeFile(varApi.FILE_LOG, "JANELA FECHADA POR REQUEST.", true);
             return;
         }
-        fsManagerApi.writeFile(varApi.FILE_LOG, "FALHA EM FECHAR JANELA POR REQUEST.");
+        fsManagerApi.writeFile(varApi.FILE_LOG, "FALHA EM FECHAR JANELA POR REQUEST.", true);
         ioManagerApi.cmndBot();
-        fsManagerApi.writeFile(varApi.FILE_LOG, "BOTEIRA FOI ACIONADO.");
+        fsManagerApi.writeFile(varApi.FILE_LOG, "BOTEIRA FOI ACIONADO.", true);
         delay(7000);
     }
 }

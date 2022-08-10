@@ -1,22 +1,46 @@
-#include <EEPROMManager.h>
 #include <ESP8266WiFi.h>
 #include <WifiManager.h>
 #include <IOManager.h>
 #include <Arduino.h>
+#include <FSManager.h>
+#include <EEPROMManager.h>
 #include <Const.h>
+#include <EEPROM.h>
 
+IOManager ioManagerWifi;
+FSManager fsManagerWifi;
 Variables varWifi;
 EEPROMManager eepromManagerWifi;
-IOManager ioManagerWifi;
 
 WifiManager::WifiManager(){}
 
 void WifiManager::wifiCheckConnection(){
-
+/*
+  int ssidSize = (int)EEPROM.read(0); 
+  int passwordSize = (int)EEPROM.read(1);
+  String WIFI_SSID = "";
+  String WIFI_PASS = "";
+  
+  for(int i = 2; i < 2+ssidSize; i++) {
+    WIFI_SSID.concat(char(EEPROM.read(i)));
+  }
+  
+  for(int j = 2+ssidSize; j < 2 + ssidSize + passwordSize; j++) {
+    WIFI_PASS.concat(char(EEPROM.read(j)));
+  }
+  EEPROM.end();
+  */
   String WIFI_SSID = eepromManagerWifi.getEEPROMString(varWifi.POSITION_EEPROM_SSID);
   String WIFI_PASS = eepromManagerWifi.getEEPROMString(varWifi.POSITION_EEPROM_PASSWORD);
 
-  Serial.print("[ESP8266] VERIFICANDO CONEXAO WIFI... ");
+  Serial.println("[EEPROM] SSID: " + WIFI_SSID + " PASS: " + WIFI_PASS);
+
+  if(WIFI_SSID.equals("") || WIFI_PASS.equals("")){
+    return;
+  }
+  Serial.println("[WIFI] SSID: " + WIFI_SSID);
+  Serial.println("[WIFI] PASSWORD: " + WIFI_PASS);
+  Serial.print("[WIFI] VERIFICANDO CONEXAO WIFI... ");
 
   if (WiFi.status() == WL_CONNECTED){
     Serial.println("CONECTADO!!!");

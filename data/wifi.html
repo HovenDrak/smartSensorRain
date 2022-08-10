@@ -1,97 +1,57 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <title>Configurações WIFI </title>
-    <style>
-        body {
-            background-color: navy;
-            text-align: center;
-        }
-
-        h2 {
-            font-family: Arial, Helvetica, sans-serif;
-            color: black;
-        }
-
-        .button {
-            width: 300px;
-            height: 50px;
-            border-radius: 10px;
-            background-color: grey;
-            position: relative;
-        }
-        .button:hover{
-            background-color:dimgrey;
-            color: white;
-            border: 2px solid black;
-        }
-        
-        .buttonEnviar {
-            width: 210px;
-            height: 30px;
-            border-radius: 10px;
-            background-color: grey;
-            position: relative;
-        }
-
-        .buttonEnviar:hover{
-            background-color:dimgrey;
-            color: white;
-            border: 2px solid black;
-        }
-        .campo {
-            width: 200px;
-            height: 25px;
-            border-radius: 10px;
-            background-color: whitesmoke;
-            position: relative;
-        }
-
-        label {
-            font-family: Arial, Helvetica, sans-serif;
-            color: black;
-        }
-        .titulo{
-            font-family: Arial, Helvetica, sans-serif;
-            color: white;
-        }
-    </style>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Configuração WIFI</title>
+    <link href="style.css" type="text/css" rel="stylesheet" />
+    <link href='https://css.gg/eye.css' rel='stylesheet'>
+    <link href='https://css.gg/eye-alt.css' rel='stylesheet'>
 </head>
 
 <body>
-    <h2 class="titulo">Sensor de Chuva</h2>
-    <h3 class="titulo">Configuração WIFI</h3>
-    
-    <form action="/salvar-senha" method="POST">
-        <div style="position: relative; right: 1.5%;">
-            <label for="SSID" style="color:white">SSID: </label>
-            <input type="text" id="SSID" name="SSID" class="campo" placeholder=" Digite o nome da rede WIFI"
-                required="required" value="" />
-        </div>
+    <div class="container">
+
+        <h2><span id="titleRed">FullArm</span><span id="titleBlack"> Hardware</span></h2>
+        <h3>Sensor de Chuva</h3>
+        <h4>Conexão WiFi</h4>
+
+        <form name="myForm" action="/salvar-senha" method="post">
+
+            <div class="field-group">
+                <input class="text-field" type="text" id="SSID" name="SSID" class="campo" placeholder="SSID"
+                    required="required" value="" />
+            </div>
+
+            <div class="field-group">
+                <input class="text-field" type="password" id="senha" name="senhaSSID" class="campo"
+                    placeholder="Password" required="required" value="" />
+                <span id="imgShowPassword" class="gg-eye lnr-eye" data-toggle="gg-eye-alt gg-eye"
+                    onclick=showPassword()></span>
+            </div>
+
+            <div class="button-container">
+                <input class="button" type="submit" value="Conectar">
+            </div>
+        </form>
+
         <p></p>
-        <div style="position: relative; right: 1%;">
-            <label for="senhaSSID" style="color:white">Senha: </label>
-            <input type="password" id="senha" name="senhaSSID" class="campo" placeholder=" Digite a senha da rede WIFI"
-                required="required" value="" />
-            <input type="checkbox" onclick="show()">
-        </div>
         <p></p>
-        <div>
-            <button type="submit" value="Enviar" onclick="enviar()" class="buttonEnviar">Enviar Configurações</button>
-        </div>
-    </form>
-    <p></p>
-    <a href="/">
-        <button class="button">Voltar para Home</button>
-    </a>
+        
+        <a href="/" class="button-container">
+            <button class="button">Voltar para Home</button>
+        </a>
+    </div>
+
     <script>
-        function show() {
+        function showPassword() {
             var senha = document.getElementById("senha");
+            var img = document.getElementById("imgShowPassword");
             if (senha.type === "password") {
+                img.classList.replace("gg-eye", "gg-eye-alt");
                 senha.type = "text";
             } else {
+                img.classList.replace("gg-eye-alt", "gg-eye");
                 senha.type = "password";
             }
         }

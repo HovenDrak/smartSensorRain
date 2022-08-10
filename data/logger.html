@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sensor de Chuva</title>
+    <link href="style.css" type="text/css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0"
+        type="text/css" rel="stylesheet" />
+</head>
+
+<body class="body-index">
+    <div class="container container-title-log">
+        <h2><span id="titleRed">FullArm</span><span id="titleBlack">Hardware</span></h2>
+        <h3>Sensor de Chuva</h3>
+    </div>
+
+    <div class="flex-debug">
+        <div class="container">
+            <h4 class="tittle-log-status">Tabela de Status</h4>
+            <div class="container-log-status">
+                <div class="container container-log-status-item">
+                    <span style="font-size:50px;" class="material-symbols-outlined" id="imgStatusRain">rainy</span>
+                    <h5 id="txtStatusRain">Com chuva</h5>
+                </div>
+                <div class="container container-log-status-item">
+                    <span style="font-size:50px;" class="material-symbols-outlined" id="imgStatusWindow">window_closed</span>
+                    <h5 id="txtStatusWindow">Fechado</h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="container container-logger" id="log">
+            <h4>Log de Informações</h4>
+            <p class="p-logger"></p>
+        </div>
+    </div>
+
+    <p></p>
+
+    <a href="/">
+        <button class="button button-out-container">Voltar para Home</button>
+    </a>
+
+    <script>
+        setInterval(function () {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+
+                    console.log(this.response["txtRain"]);
+                    console.log(this.response["txtWindow"]);
+
+                    document.getElementById("txtStatusRain").textContent = this.response["txtRain"];
+                    document.getElementById("imgStatusRain").textContent = this.response["imgRain"];
+
+                    document.getElementById("txtStatusWindow").textContent = this.response["txtWindow"];
+                    document.getElementById("imgStatusWindow").textContent = this.response["imgWindow"];
+                }
+            };
+            xhttp.open("GET", "/status_rain", true);
+            xhttp.responseType = 'json';
+            xhttp.send();
+        }, 500);
+    </script>
+</body>
+
+</html>

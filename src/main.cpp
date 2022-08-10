@@ -1,23 +1,25 @@
+#include <WifiManager.h>
+#include <ApiManager.h>
+#include <WebManager.h>
+#include <IOManager.h>
+#include <FSManager.h>
+#include <Const.h>
+
 #include <Arduino.h>
 #include <EEPROM.h>
-#include <Const.h>
-#include <FSManager.h>
-#include <IOManager.h>
-#include <WifiManager.h>
-#include <WebManager.h>
-#include <ApiManager.h>
 
-IOManager ioManagerMain;
-FSManager fsManagerMain;
 WifiManager wifiManagerMain;
 WebManager webManagerMain;
 ApiManager apiManagerMain;
+IOManager ioManagerMain;
+FSManager fsManagerMain;
 Variables varMain;
 
-int verifyWifi;
 int verifySensors;
+int verifyWifi;
 
 void setup(){
+  
   Serial.begin(varMain.SERIAL_RATE);
   EEPROM.begin(varMain.POSITION_EEPROM_TOTAL);
   ESP.wdtEnable(varMain.WATCHDOG_TIME);
@@ -27,22 +29,19 @@ void setup(){
   ioManagerMain.ledCheckConfig();
   wifiManagerMain.wifiOffConfig();
   webManagerMain.loadHTML();
+  wifiManagerMain.wifiCheckConnection();
 }
 
 void loop(){
 
   ESP.wdtFeed();
 
-  if(ioManagerMain.canCloseWindow()){
-    apiManagerMain.postTrigger();
-  }
-
   if((millis() - verifyWifi) >= 1000){
     verifyWifi = millis();
     ioManagerMain.verifySensors();
   }
 
-  if((millis() - verifyWifi) >= 20000){
+  if((millis() - verifyWifi) >= 10500){
     verifyWifi = millis();
     wifiManagerMain.wifiCheckConnection();
   }
