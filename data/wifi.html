@@ -4,7 +4,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Configuração WIFI</title>
-    <link href="style.css" type="text/css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="style"/>
     <link href='https://css.gg/eye.css' rel='stylesheet'>
     <link href='https://css.gg/eye-alt.css' rel='stylesheet'>
 </head>
@@ -24,10 +24,11 @@
             </div>
 
             <div class="field-group">
+                <span id="imgShowPassword" class="gg-eye lnr-eye" data-toggle="gg-eye-alt gg-eye"
+                    onclick=showPassword()>
+                </span>
                 <input class="text-field" type="password" id="senha" name="senhaSSID" class="campo"
                     placeholder="Password" required="required" value="" />
-                <span id="imgShowPassword" class="gg-eye lnr-eye" data-toggle="gg-eye-alt gg-eye"
-                    onclick=showPassword()></span>
             </div>
 
             <div class="button-container">
@@ -37,8 +38,8 @@
 
         <p></p>
         <p></p>
-        
-        <a href="/" class="button-container">
+
+        <a href="javascript:history.back()" class="button-container">
             <button class="button">Voltar para Home</button>
         </a>
     </div>

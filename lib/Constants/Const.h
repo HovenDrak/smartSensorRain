@@ -43,16 +43,21 @@ class Variables{
         String FILE_HTML_INDEX = "/index.html";
         String FILE_HTML_LOGGER = "/logger.html";
         
+        String STATUS_IMG_WINDOW_OPEN = "window_open";
+        String STATUS_TXT_WINDOW_OPEN = "Aberto";
+        String STATUS_SHADOW_WINDOW_OPEN = "shadow-status-window-open";
 
-        String REPLACE_STATUS = "<div class=\"container-log-status\"></div>";
-        String INITIAL_DIV = "<div class=\"container-log-status\">";
-        String FINAL_DIV = "</div>";
+        String STATUS_IMG_WINDOW_CLOSED = "window_closed";
+        String STATUS_TXT_WINDOW_CLOSED = "Fechado";
 
-        String STATUS_SENSOR_OPEN = "window_open";
-        String STATUS_SENSOR_CLOSED = "window_closed";
+        String STATUS_NOT_SHADOW = "shadow-status-ok";
 
-        String STATUS_RAIN_DETECTED = "rainy";
-        String STATUS_RAIN_NOT_DETECTED = "cloudy";
+        String STATUS_IMG_RAIN_DETECTED = "rainy";
+        String STATUS_TXT_RAIN_DETECTED = "Com Chuva";
+        String STATUS_SHADOW_RAIN_DETECTED = "shadow-status-rain-detected";
+
+        String STATUS_IMG_RAIN_NOT_DETECTED = "cloudy";
+        String STATUS_TXT_RAIN_NOT_DETECTED = "Sem Chuva";
 
 
         // -------------X CONST EPROM X------------- //

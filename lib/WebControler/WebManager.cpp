@@ -5,24 +5,28 @@
 #include <FSManager.h>
 #include <Const.h>
 
-#include <ESPAsyncWebServer.h>
-#include <ESPAsyncTCP.h>
-#include <ArduinoJson.h>
 #include <Arduino.h>
 #include <LittleFS.h>
+#include <ESPAsyncTCP.h>
+#include <ArduinoJson.h>
+#include <ESPAsyncWebServer.h>
 
-AsyncWebServer server(80);
-EEPROMManager eepromManagerWeb;
-WifiManager wifiManagerWeb;
+Variables varWeb;
 FSManager fsManagerWeb;
 IOManager ioManagerWeb;
-Variables varWeb;
+AsyncWebServer server(80);
+WifiManager wifiManagerWeb;
+EEPROMManager eepromManagerWeb;
 
 String html;
 boolean pageDebugOpen = false;
+
+String statusShadowRain = "";
 String statusImgRainHTML = "";
-String statusImgWindowHTML = "";
 String statusNameRainHTML = "";
+
+String statusShadowWindow = "";
+String statusImgWindowHTML = "";
 String statusNameWindowHTML = "";
 
 WebManager::WebManager(){}
@@ -34,10 +38,9 @@ void WebManager::loadHTML(){
 
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){ 
         request->send(200, "text/html", fsManagerWeb.readFileString(varWeb.FILE_HTML_INDEX));
-        pageDebugOpen = false;
     });
 
-    server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){ 
+    server.on("/style", HTTP_GET, [](AsyncWebServerRequest *request){ 
         request->send(200, "text/css", fsManagerWeb.readFileString(varWeb.FILE_CSS));
     });
 
@@ -90,13 +93,29 @@ void WebManager::loadHTML(){
         request->send(200, "text/html", fsManagerWeb.readFileString(varWeb.FILE_HTML_WIFI));
     });
 
-    server.on("/status_rain", HTTP_GET, [](AsyncWebServerRequest *request){
+    server.on("/info_logger", HTTP_GET, [](AsyncWebServerRequest *request){
         AsyncResponseStream *response = request->beginResponseStream("application/json");
         DynamicJsonDocument json(1024);
+
         json["imgRain"] = statusImgRainHTML;
         json["txtRain"] = statusNameRainHTML;
+
         json["imgWindow"] = statusImgWindowHTML;
         json["txtWindow"] = statusNameWindowHTML;
+
+        json["shadowRain"] = statusShadowRain;
+        json["shadowWindow"] = statusShadowWindow;
+
+        serializeJson(json, *response);
+        request->send(response);
+    });
+
+    server.on("/get_logger", HTTP_GET, [](AsyncWebServerRequest *request){
+        AsyncResponseStream *response = request->beginResponseStream("application/json");
+        DynamicJsonDocument json(1024);
+
+        json["txtLogger"] = fsManagerWeb.readFileString(varWeb.FILE_LOG);
+        
         serializeJson(json, *response);
         request->send(response);
     });
@@ -104,21 +123,23 @@ void WebManager::loadHTML(){
 
 void WebManager::refreshStatus(int statusRain, int statusWindow){
 
-    if(statusRain == 1){
-        statusImgRainHTML = varWeb.STATUS_RAIN_DETECTED;
-        statusNameRainHTML = "Com Chuva";
-        
-    } else {
-        statusImgRainHTML = varWeb.STATUS_RAIN_NOT_DETECTED;
-        statusNameRainHTML = "Sem Chuva";
+    if(statusRain == 0){
+        statusImgRainHTML = varWeb.STATUS_IMG_RAIN_DETECTED;
+        statusNameRainHTML = varWeb.STATUS_TXT_RAIN_DETECTED;
+        statusShadowRain = varWeb.STATUS_SHADOW_RAIN_DETECTED;
+    } else{
+        statusImgRainHTML = varWeb.STATUS_IMG_RAIN_NOT_DETECTED;
+        statusNameRainHTML = varWeb.STATUS_TXT_RAIN_NOT_DETECTED;
+        statusShadowRain = varWeb.STATUS_NOT_SHADOW;
     }
-
-    if(statusWindow == 1){
-        statusImgWindowHTML = varWeb.STATUS_SENSOR_OPEN;
-        statusNameWindowHTML = "Aberto";
-    } else {
-        statusImgWindowHTML = varWeb.STATUS_SENSOR_CLOSED;
-        statusNameWindowHTML = "Fechado";
+    
+    if(statusWindow == 0){
+        statusImgWindowHTML = varWeb.STATUS_IMG_WINDOW_OPEN;
+        statusNameWindowHTML = varWeb.STATUS_TXT_WINDOW_OPEN;
+        statusShadowWindow = varWeb.STATUS_SHADOW_WINDOW_OPEN;
+    } else{
+        statusImgWindowHTML = varWeb.STATUS_IMG_WINDOW_CLOSED;
+        statusNameWindowHTML = varWeb.STATUS_TXT_WINDOW_CLOSED;
+        statusShadowWindow = varWeb.STATUS_NOT_SHADOW;
     }
-      
 }

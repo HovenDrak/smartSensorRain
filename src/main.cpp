@@ -43,6 +43,7 @@ void loop(){
 
   if((millis() - verifyWifi) >= 10500){
     verifyWifi = millis();
+    Serial.println("VERIICANDO WIFI");
     wifiManagerMain.wifiCheckConnection();
   }
 }

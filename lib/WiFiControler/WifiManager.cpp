@@ -15,21 +15,7 @@ EEPROMManager eepromManagerWifi;
 WifiManager::WifiManager(){}
 
 void WifiManager::wifiCheckConnection(){
-/*
-  int ssidSize = (int)EEPROM.read(0); 
-  int passwordSize = (int)EEPROM.read(1);
-  String WIFI_SSID = "";
-  String WIFI_PASS = "";
-  
-  for(int i = 2; i < 2+ssidSize; i++) {
-    WIFI_SSID.concat(char(EEPROM.read(i)));
-  }
-  
-  for(int j = 2+ssidSize; j < 2 + ssidSize + passwordSize; j++) {
-    WIFI_PASS.concat(char(EEPROM.read(j)));
-  }
-  EEPROM.end();
-  */
+
   String WIFI_SSID = eepromManagerWifi.getEEPROMString(varWifi.POSITION_EEPROM_SSID);
   String WIFI_PASS = eepromManagerWifi.getEEPROMString(varWifi.POSITION_EEPROM_PASSWORD);
 
@@ -65,6 +51,7 @@ void WifiManager::wifiCheckConnection(){
   Serial.println("[ESP8266] WIFI CONECTADO!!!");
   Serial.print("[ESP8266] IP ADDRESS: ");
   Serial.println(WiFi.localIP());
+  Serial.println("[ESP8266] MAC: " + WiFi.macAddress());
 }
 
 void WifiManager::wifiOffConfig(){

@@ -66,8 +66,8 @@ void FSManager::writeFile(String fileName, String msg, boolean includeDate){
         ts = *localtime(&epoch);
         strftime(date, sizeof(date), "%d/%m/%Y ", &ts);
 
-        Serial.printf("\n[%s]: %s", (date + hora).c_str(), msg.c_str());
-        rFile.printf("\n[%s]: %s", (date + hora).c_str(), msg.c_str());
+        Serial.printf("[%s]: %s\n", (date + hora).c_str(), msg.c_str());
+        rFile.print("[" + String(date) + hora + "]: " + msg + "<br>");
     } else {
         rFile.println(msg);
     }

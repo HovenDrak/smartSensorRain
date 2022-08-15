@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Sensor de Chuva</title>
-    <link href="style.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="style"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0"
         type="text/css" rel="stylesheet" />
 </head>
@@ -16,29 +16,31 @@
     </div>
 
     <div class="flex-debug">
-        <div class="container">
+        <div class="container container-status">
             <h4 class="tittle-log-status">Tabela de Status</h4>
             <div class="container-log-status">
-                <div class="container container-log-status-item">
-                    <span style="font-size:50px;" class="material-symbols-outlined" id="imgStatusRain">rainy</span>
-                    <h5 id="txtStatusRain">Com chuva</h5>
+                <div class="container container-log-status-item shadow-status-ok" id="divRain">
+                    <span style="font-size:50px;" class="material-symbols-outlined" id="imgStatusRain"></span>
+                    <h5 id="txtStatusRain"></h5>
                 </div>
-                <div class="container container-log-status-item">
-                    <span style="font-size:50px;" class="material-symbols-outlined" id="imgStatusWindow">window_closed</span>
-                    <h5 id="txtStatusWindow">Fechado</h5>
+                <div class="container container-log-status-item shadow-status-ok" id="divWindow">
+                    <span style="font-size:50px;" class="material-symbols-outlined" id="imgStatusWindow"></span>
+                    <h5 id="txtStatusWindow"></h5>
                 </div>
             </div>
         </div>
 
         <div class="container container-logger" id="log">
-            <h4>Log de Informações</h4>
-            <p class="p-logger"></p>
+            <h4 class="tittle-log-status">Log de Informações</h4>
+            <div class="container-logger">
+                <p class="p-logger" id="txtLogger"></p>
+            </div>
         </div>
     </div>
 
     <p></p>
 
-    <a href="/">
+    <a href="javascript:history.back()">
         <button class="button button-out-container">Voltar para Home</button>
     </a>
 
@@ -48,20 +50,45 @@
             xhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
 
-                    console.log(this.response["txtRain"]);
-                    console.log(this.response["txtWindow"]);
+                    setContentElement("txtStatusRain", this.response["txtRain"]);
+                    setContentElement("imgStatusRain", this.response["imgRain"]);
+                    setContentElement("txtStatusWindow", this.response["txtWindow"]);
+                    setContentElement("imgStatusWindow", this.response["imgWindow"]);
 
-                    document.getElementById("txtStatusRain").textContent = this.response["txtRain"];
-                    document.getElementById("imgStatusRain").textContent = this.response["imgRain"];
-
-                    document.getElementById("txtStatusWindow").textContent = this.response["txtWindow"];
-                    document.getElementById("imgStatusWindow").textContent = this.response["imgWindow"];
+                    setShadow("divRain", this.response["shadowRain"]);
+                    setShadow("divWindow", this.response["shadowWindow"]);
                 }
             };
-            xhttp.open("GET", "/status_rain", true);
+            xhttp.open("GET", "/info_logger", true);
             xhttp.responseType = 'json';
             xhttp.send();
-        }, 500);
+        }, 1866);
+
+        function setContentElement(id, msg){
+            document.getElementById(id).textContent = msg;
+        }
+
+        function setShadow(id, classShadow){
+            document.getElementById(id).classList.remove("shadow-status-rain-detected", 
+                                                         "shadow-status-window-open",
+                                                         "shadow-status-ok");
+            document.getElementById(id).classList.add(classShadow);
+        }
+
+
+        setInterval(function () {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("txtLogger").innerHTML = this.response["txtLogger"];
+                }
+            };
+            xhttp.open("GET", "/get_logger", true);
+            xhttp.responseType = 'json';
+            xhttp.send();
+        }, 4277);
+
+
     </script>
 </body>
 

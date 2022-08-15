@@ -1,6 +1,7 @@
 class WifiManager{
     public:
         WifiManager();
-        void wifiCheckConnection();
+        void connectWifi();
         void wifiOffConfig();
+        void wifiCheckConnection();
 };
