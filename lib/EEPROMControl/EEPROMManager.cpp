@@ -33,12 +33,12 @@ void EEPROMManager::setWiFiEEPROM(String ssid, String password){
   if(!compareWiFiEEPROM(ssid, password)) {
 
     EEPROM.write(0, ssid.length());
-    for(int i = 2; i < 2 + ssid.length(); i++) {
+    for(unsigned int i = 2; i < 2 + ssid.length(); i++) {
       EEPROM.write(i, ssid.charAt(i-2));
     }
 
     EEPROM.write(1, password.length());
-    for(int j = 2 + ssid.length(); j < 2 + ssid.length()+ password.length(); j++) {
+    for(unsigned int j = 2 + ssid.length(); j < 2 + ssid.length()+ password.length(); j++) {
       EEPROM.write(j, password.charAt(j - 2 - ssid.length()));
     }
     EEPROM.commit();

@@ -38,10 +38,11 @@ class Variables{
         String IMG_RAIN_NOT_DETECTED = "/icon_rain_not_detected.png";
 
         String FILE_CSS = "/style.css";
-        String FILE_HTML_WIFI = "/wifi.html";
-        String FILE_HTML_MQTT = "/mqtt.html";
-        String FILE_HTML_INDEX = "/index.html";
-        String FILE_HTML_LOGGER = "/logger.html";
+        String PATH_ROOT_HTML = "/html";
+        String FILE_HTML_WIFI = PATH_ROOT_HTML + "/wifi.html";
+        String FILE_HTML_MQTT = PATH_ROOT_HTML + "/mqtt.html";
+        String FILE_HTML_INDEX = PATH_ROOT_HTML + "/index.html";
+        String FILE_HTML_LOGGER = PATH_ROOT_HTML + "/logger.html";
         
         String STATUS_IMG_WINDOW_OPEN = "window_open";
         String STATUS_TXT_WINDOW_OPEN = "Aberto";

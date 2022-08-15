@@ -9,6 +9,7 @@
 #include <LittleFS.h>
 #include <ESPAsyncTCP.h>
 #include <ArduinoJson.h>
+#include <AsyncElegantOTA.h>
 #include <ESPAsyncWebServer.h>
 
 Variables varWeb;
@@ -33,8 +34,8 @@ WebManager::WebManager(){}
 
 void WebManager::loadHTML(){
     
+    AsyncElegantOTA.begin(&server);
     server.begin();
-//    ElegantOTA.begin();
 
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){ 
         request->send(200, "text/html", fsManagerWeb.readFileString(varWeb.FILE_HTML_INDEX));

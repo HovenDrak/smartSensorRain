@@ -17,10 +17,10 @@ NTPClient ntpClient(udp, "b.ntp.br", -3 * 3600);
 
 void FSManager::beginFS(){
     if(LittleFS.begin()){
-        if(!SPIFFS.exists(varFS.FILE_LOG)){
+        if(!LittleFS.exists(varFS.FILE_LOG)){
             createFile(varFS.FILE_LOG);
         }
-        if(!SPIFFS.exists(varFS.FILE_LOG_STATUS)){
+        if(!LittleFS.exists(varFS.FILE_LOG_STATUS)){
             createFile(varFS.FILE_LOG_STATUS);
         }
     }
