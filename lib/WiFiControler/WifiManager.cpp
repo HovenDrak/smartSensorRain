@@ -24,6 +24,7 @@ void WifiManager::wifiCheckConnection(){
   if(WIFI_SSID.equals("") || WIFI_PASS.equals("")){
     return;
   }
+
   Serial.println("[WIFI] SSID: " + WIFI_SSID);
   Serial.println("[WIFI] PASSWORD: " + WIFI_PASS);
   Serial.print("[WIFI] VERIFICANDO CONEXAO WIFI... ");
@@ -46,11 +47,15 @@ void WifiManager::wifiCheckConnection(){
     delay(500);
     Serial.print(".");
   }
+
   randomSeed(micros());
   ioManagerWifi.cmndLedWifi(true);
+  
   Serial.println("[ESP8266] WIFI CONECTADO!!!");
-  Serial.print("[ESP8266] IP ADDRESS: ");
+
+  Serial.println("[ESP8266] IP ADDRESS: ");
   Serial.println(WiFi.localIP());
+
   Serial.println("[ESP8266] MAC: " + WiFi.macAddress());
 }
 

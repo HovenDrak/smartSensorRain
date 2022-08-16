@@ -5,30 +5,30 @@
 #include <FSManager.h>
 #include <Const.h>
 
-#include <Arduino.h>
-#include <LittleFS.h>
-#include <ESPAsyncTCP.h>
-#include <ArduinoJson.h>
-#include <AsyncElegantOTA.h>
 #include <ESPAsyncWebServer.h>
+#include <AsyncElegantOTA.h>
+#include <ArduinoJson.h>
+#include <ESPAsyncTCP.h>
+#include <LittleFS.h>
+#include <Arduino.h>
 
-Variables varWeb;
+EEPROMManager eepromManagerWeb;
+WifiManager wifiManagerWeb;
+AsyncWebServer server(80);
 FSManager fsManagerWeb;
 IOManager ioManagerWeb;
-AsyncWebServer server(80);
-WifiManager wifiManagerWeb;
-EEPROMManager eepromManagerWeb;
+Variables varWeb;
 
-String html;
 boolean pageDebugOpen = false;
+String html;
 
-String statusShadowRain = "";
-String statusImgRainHTML = "";
 String statusNameRainHTML = "";
+String statusImgRainHTML = "";
+String statusShadowRain = "";
 
-String statusShadowWindow = "";
-String statusImgWindowHTML = "";
 String statusNameWindowHTML = "";
+String statusImgWindowHTML = "";
+String statusShadowWindow = "";
 
 WebManager::WebManager(){}
 
@@ -43,6 +43,10 @@ void WebManager::loadHTML(){
 
     server.on("/style", HTTP_GET, [](AsyncWebServerRequest *request){ 
         request->send(200, "text/css", fsManagerWeb.readFileString(varWeb.FILE_CSS));
+    });
+
+    server.on("/js/logger", HTTP_GET, [](AsyncWebServerRequest *request){ 
+        request->send(200, "text/javascript", fsManagerWeb.readFileString(varWeb.FILE_JS_LOGGER));
     });
 
     server.on("/config_wifi", HTTP_GET, [](AsyncWebServerRequest *request){ 

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Sensor de Chuva</title>
-    <link rel="stylesheet" type="text/css" href="style"/>
+    <link rel="stylesheet" type="text/css" href="http://172.19.0.60/style"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0"
         type="text/css" rel="stylesheet" />
 </head>
@@ -14,8 +14,8 @@
         <h2><span id="titleRed">FullArm</span><span id="titleBlack">Hardware</span></h2>
         <h3>Sensor de Chuva</h3>
     </div>
-
-    <div class="flex-debug">
+    <div class="c-loader" id="loader"></div>
+    <div class="flex-debug" id="id-flex-debug">
         <div class="container container-status">
             <h4 class="tittle-log-status">Tabela de Status</h4>
             <div class="container-log-status">
@@ -44,52 +44,8 @@
         <button class="button button-out-container">Voltar para Home</button>
     </a>
 
-    <script>
-        setInterval(function () {
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
+    <script src="/js/logger"></script>
 
-                    setContentElement("txtStatusRain", this.response["txtRain"]);
-                    setContentElement("imgStatusRain", this.response["imgRain"]);
-                    setContentElement("txtStatusWindow", this.response["txtWindow"]);
-                    setContentElement("imgStatusWindow", this.response["imgWindow"]);
-
-                    setShadow("divRain", this.response["shadowRain"]);
-                    setShadow("divWindow", this.response["shadowWindow"]);
-                }
-            };
-            xhttp.open("GET", "/info_logger", true);
-            xhttp.responseType = 'json';
-            xhttp.send();
-        }, 1866);
-
-        function setContentElement(id, msg){
-            document.getElementById(id).textContent = msg;
-        }
-
-        function setShadow(id, classShadow){
-            document.getElementById(id).classList.remove("shadow-status-rain-detected", 
-                                                         "shadow-status-window-open",
-                                                         "shadow-status-ok");
-            document.getElementById(id).classList.add(classShadow);
-        }
-
-
-        setInterval(function () {
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById("txtLogger").innerHTML = this.response["txtLogger"];
-                }
-            };
-            xhttp.open("GET", "/get_logger", true);
-            xhttp.responseType = 'json';
-            xhttp.send();
-        }, 4277);
-
-
-    </script>
 </body>
 
 </html>

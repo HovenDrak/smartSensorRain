@@ -4,14 +4,12 @@ class Variables{
     public:
 
         // -------------X CONST WIFI X------------- // 
-        const char* WIFI_SSID = "devicesdev";
-        const char* WIFI_PASS = "kgb8y2kk";
-
         const char* WIFI_SSID_OFF = "Sensor de Chuva";
         const char* WIFI_PASS_OFF = "12345678";
         
         // -------------X CONST PINS X------------- // 
         volatile int TICK_EVENT_COUNTER = 1500000;
+
         int PIN_OUTS[5] = {16, 4, 14, 5, LED_BUILTIN};
         int PIN_OUT_BOT = PIN_OUTS[0];
         int PIN_LED_WIFI = PIN_OUTS[1];
@@ -39,17 +37,18 @@ class Variables{
 
         String FILE_CSS = "/style.css";
         String PATH_ROOT_HTML = "/html";
+        String FILE_JS_LOGGER = "/js/logger.js";
         String FILE_HTML_WIFI = PATH_ROOT_HTML + "/wifi.html";
         String FILE_HTML_MQTT = PATH_ROOT_HTML + "/mqtt.html";
         String FILE_HTML_INDEX = PATH_ROOT_HTML + "/index.html";
         String FILE_HTML_LOGGER = PATH_ROOT_HTML + "/logger.html";
         
-        String STATUS_IMG_WINDOW_OPEN = "window_open";
         String STATUS_TXT_WINDOW_OPEN = "Aberto";
+        String STATUS_IMG_WINDOW_OPEN = "window_open";
         String STATUS_SHADOW_WINDOW_OPEN = "shadow-status-window-open";
 
-        String STATUS_IMG_WINDOW_CLOSED = "window_closed";
         String STATUS_TXT_WINDOW_CLOSED = "Fechado";
+        String STATUS_IMG_WINDOW_CLOSED = "window_closed";
 
         String STATUS_NOT_SHADOW = "shadow-status-ok";
 

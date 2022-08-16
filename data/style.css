@@ -179,9 +179,27 @@ form .field-group {
 
 .flex-debug{
     margin: 0 auto;
-    display: flex;
+    display: none;
     text-align: center;
     height: 60%;
+}
+
+.c-loader {
+    animation: is-rotating 1s infinite;
+    border-radius: 50%;
+    border: 6px solid #e5e5e5;
+    border-top-color: #51d4db;
+    height: 50px;
+    width: 50px;
+    margin: 0 auto;
+    margin-top: 10%;
+    margin-bottom: 12%;
+}
+
+@keyframes is-rotating {
+    to {
+      transform: rotate(1turn);
+    }
 }
 
 .container-logger {
