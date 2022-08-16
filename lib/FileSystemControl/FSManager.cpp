@@ -5,8 +5,10 @@
 #include <NTPClient.h>
 #include <WiFiUdp.h>
 #include <Const.h>
+#include <WebManager.h>
 
 Variables varFS;
+WebManager webManagerFS;
 
 FSManager::FSManager(){}
 
@@ -68,6 +70,7 @@ void FSManager::writeFile(String fileName, String msg, boolean includeDate){
 
         Serial.printf("[%s]: %s\n", (date + hora).c_str(), msg.c_str());
         rFile.print("[" + String(date) + hora + "]: " + msg + "<br>");
+        delay(300);
     } else {
         rFile.println(msg);
     }

@@ -8,7 +8,7 @@
 
 Ticker timer;
 Variables varIO;
-WebManager webManager;
+WebManager webManagerIO;
 ApiManager apiManagerIO;
 
 int STATUS_SENSORS[2] = {0,0};
@@ -115,13 +115,14 @@ void IOManager::verifySensors(){
         }
     }
 
-    webManager.refreshStatus(STATUS_SENSORS[0], STATUS_SENSORS[1]);
+    webManagerIO.refreshStatus(STATUS_SENSORS[0], STATUS_SENSORS[1]);
     
     if(canClose){
         if(WiFi.status() == WL_CONNECTED){
             apiManagerIO.postTrigger();
         } else {
             cmndBot();
+            webManagerIO.refreshLogger();
             delay(7000);
         }
     }

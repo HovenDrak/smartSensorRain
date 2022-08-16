@@ -19,9 +19,6 @@ FSManager fsManagerWeb;
 IOManager ioManagerWeb;
 Variables varWeb;
 
-boolean pageDebugOpen = false;
-String html;
-
 String statusNameRainHTML = "";
 String statusImgRainHTML = "";
 String statusShadowRain = "";
@@ -30,12 +27,18 @@ String statusNameWindowHTML = "";
 String statusImgWindowHTML = "";
 String statusShadowWindow = "";
 
+boolean pageDebugOpen = false;
+String logger;
+String html;
+
 WebManager::WebManager(){}
 
 void WebManager::loadHTML(){
     
     AsyncElegantOTA.begin(&server);
     server.begin();
+    delay(500);
+    refreshLogger();
 
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){ 
         request->send(200, "text/html", fsManagerWeb.readFileString(varWeb.FILE_HTML_INDEX));
@@ -119,7 +122,7 @@ void WebManager::loadHTML(){
         AsyncResponseStream *response = request->beginResponseStream("application/json");
         DynamicJsonDocument json(1024);
 
-        json["txtLogger"] = fsManagerWeb.readFileString(varWeb.FILE_LOG);
+        json["txtLogger"] = logger;
         
         serializeJson(json, *response);
         request->send(response);
@@ -132,6 +135,7 @@ void WebManager::refreshStatus(int statusRain, int statusWindow){
         statusImgRainHTML = varWeb.STATUS_IMG_RAIN_DETECTED;
         statusNameRainHTML = varWeb.STATUS_TXT_RAIN_DETECTED;
         statusShadowRain = varWeb.STATUS_SHADOW_RAIN_DETECTED;
+
     } else{
         statusImgRainHTML = varWeb.STATUS_IMG_RAIN_NOT_DETECTED;
         statusNameRainHTML = varWeb.STATUS_TXT_RAIN_NOT_DETECTED;
@@ -142,9 +146,15 @@ void WebManager::refreshStatus(int statusRain, int statusWindow){
         statusImgWindowHTML = varWeb.STATUS_IMG_WINDOW_OPEN;
         statusNameWindowHTML = varWeb.STATUS_TXT_WINDOW_OPEN;
         statusShadowWindow = varWeb.STATUS_SHADOW_WINDOW_OPEN;
+        
     } else{
         statusImgWindowHTML = varWeb.STATUS_IMG_WINDOW_CLOSED;
         statusNameWindowHTML = varWeb.STATUS_TXT_WINDOW_CLOSED;
         statusShadowWindow = varWeb.STATUS_NOT_SHADOW;
     }
+}
+
+void WebManager::refreshLogger(){
+    logger = fsManagerWeb.readFileString(varWeb.FILE_LOG);
+    delay(200);
 }

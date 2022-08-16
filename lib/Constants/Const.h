@@ -67,6 +67,6 @@ class Variables{
 
         // -------------X CONST ESP X------------- //
         int SERIAL_RATE = 115200;
-        int WATCHDOG_TIME = 17000;
+        int WATCHDOG_TIME = 30000;
 
 };

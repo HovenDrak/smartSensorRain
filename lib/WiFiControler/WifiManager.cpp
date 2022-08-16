@@ -12,25 +12,18 @@ FSManager fsManagerWifi;
 Variables varWifi;
 EEPROMManager eepromManagerWifi;
 
+String WIFI_SSID = "";
+String WIFI_PASS = "";
+
 WifiManager::WifiManager(){}
 
 void WifiManager::wifiCheckConnection(){
-
-  String WIFI_SSID = eepromManagerWifi.getEEPROMString(varWifi.POSITION_EEPROM_SSID);
-  String WIFI_PASS = eepromManagerWifi.getEEPROMString(varWifi.POSITION_EEPROM_PASSWORD);
-
-  Serial.println("[EEPROM] SSID: " + WIFI_SSID + " PASS: " + WIFI_PASS);
 
   if(WIFI_SSID.equals("") || WIFI_PASS.equals("")){
     return;
   }
 
-  Serial.println("[WIFI] SSID: " + WIFI_SSID);
-  Serial.println("[WIFI] PASSWORD: " + WIFI_PASS);
-  Serial.print("[WIFI] VERIFICANDO CONEXAO WIFI... ");
-
   if (WiFi.status() == WL_CONNECTED){
-    Serial.println("CONECTADO!!!");
     ioManagerWifi.cmndLedWifi(true);
     return;
   } 
@@ -67,4 +60,9 @@ void WifiManager::wifiOffConfig(){
   WiFi.mode(WIFI_AP);
   WiFi.softAP(varWifi.WIFI_SSID_OFF, varWifi.WIFI_PASS_OFF, 2, 0);
   WiFi.config(staticIP, gateway, subnet);
+}
+
+void WifiManager::getWifiEEPROM(){
+  WIFI_SSID = eepromManagerWifi.getEEPROMString(varWifi.POSITION_EEPROM_SSID);
+  WIFI_PASS = eepromManagerWifi.getEEPROMString(varWifi.POSITION_EEPROM_PASSWORD);
 }

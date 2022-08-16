@@ -1,15 +1,17 @@
 #include <WiFiClientSecureBearSSL.h>
 #include <ESP8266HTTPClient.h>
 #include <ApiManager.h>
+#include <WebManager.h>
 #include <FSManager.h>
 #include <IOManager.h>
 #include <Arduino.h>
 #include <Const.h>
 #include <vector>
 
-Variables varApi;
-IOManager ioManagerApi;
+WebManager webManagerApi;
 FSManager fsManagerApi;
+IOManager ioManagerApi;
+Variables varApi;
 
 std::unique_ptr <BearSSL::WiFiClientSecure> client(new BearSSL::WiFiClientSecure);
 HTTPClient https;
@@ -43,8 +45,10 @@ void ApiManager::postTrigger(){
         }
         fsManagerApi.writeFile(varApi.FILE_LOG, "TRIGGER ACIONADA COM SUCESSO.", true);
         fsManagerApi.writeFile(varApi.FILE_LOG, "AGUARDANDO JANELA SER FECHADA.", true);
-        delay(7000);
-
+        delay(2000);
+        webManagerApi.refreshLogger();
+        delay(5000);
+        
         if(!ioManagerApi.verifyWindowClosed()){
             fsManagerApi.writeFile(varApi.FILE_LOG, "JANELA FECHADA POR REQUEST.", true);
             return;
@@ -52,6 +56,8 @@ void ApiManager::postTrigger(){
         fsManagerApi.writeFile(varApi.FILE_LOG, "FALHA EM FECHAR JANELA POR REQUEST.", true);
         ioManagerApi.cmndBot();
         fsManagerApi.writeFile(varApi.FILE_LOG, "BOTEIRA FOI ACIONADO.", true);
-        delay(7000);
+        delay(2000);
+        webManagerApi.refreshLogger();
+        delay(5000);
     }
 }

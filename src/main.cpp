@@ -27,6 +27,7 @@ void setup(){
   fsManagerMain.beginFS();
   ioManagerMain.pinSetConfig();
   ioManagerMain.ledCheckConfig();
+  wifiManagerMain.getWifiEEPROM();
   wifiManagerMain.wifiOffConfig();
   webManagerMain.loadHTML();
   wifiManagerMain.wifiCheckConnection();
@@ -39,11 +40,12 @@ void loop(){
   if((millis() - verifyWifi) >= 1000){
     verifyWifi = millis();
     ioManagerMain.verifySensors();
+    yield();
   }
 
   if((millis() - verifyWifi) >= 10500){
     verifyWifi = millis();
-    Serial.println("VERIICANDO WIFI");
     wifiManagerMain.wifiCheckConnection();
+    yield();
   }
 }
